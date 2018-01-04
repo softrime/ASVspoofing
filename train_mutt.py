@@ -73,32 +73,6 @@ print "finish iter"
 
 
 ##### define NN #####
-'''
-sentidx = mx.sym.Variable("sentidx")
-sents = []
-for i in range(0, 10):
-    sents.append(mx.sym.Variable('sent%d'% (i+1)))
-weight = []
-bias   = []
-
-data = mx.sym.Variable('data')
-next_layer = []
-for i in range(0, 10):
-    net = mx.sym.FullyConnected(data=data, name="fc1_%d"%(i+1), num_hidden=dnnsize)
-    net = mx.sym.Activation(data=net, name="sig1_%d"%(i+1), act_type="sigmoid")
-    next_layer.append(net)
-
-select = next_layer[0]
-for i in range(0, 10):
-    select = mx.sym.where(mx.sym.broadcast_equal(sentidx, sents[i]), next_layer[i], select)
-
- 
-for l in range(0, ndnn):
-    net = mx.sym.FullyConnected(data=select, name="l%d" % (l+2), num_hidden=dnnsize)
-    net = mx.sym.Activation(data=net, name="sig%d" % (l+2), act_type="sigmoid")
-net = mx.sym.FullyConnected(data=net, name="fc%d" % (ndnn + 2), num_hidden=2)
-net = mx.sym.SoftmaxOutput(data=net, name='softmax')
-'''
 net = dnn_multi_input(ndnn=ndnn, dnnsize=dnnsize)
 
 
