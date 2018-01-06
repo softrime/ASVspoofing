@@ -114,6 +114,100 @@ class Simple_Iter(mx.io.DataIter):
 
 
 
+class Cnn_Iter(mx.io.DataIter):
+    def __init__(self, feats_scp, labels_scp, data_names, data_shapes, label_names, label_shapes, batch_size, length=200, shuffle=True):
+
+        self.feats_scp  = feats_scp
+        self.labels_scp = labels_scp
+        self.batch_size = batch_size
+        self.data_shapes = data_shapes
+        self.label_shapes = label_shapes
+        self._provide_data  = zip(data_names, data_shapes)
+        self._provide_label = zip(label_names, label_shapes)
+        self.length = length
+
+        def shape(features):
+            if len(features) == self.length:
+                return np.array(features)
+            elif len(features) < self.length:
+                residual = self.length - len(features)
+                features = features + [np.full((self.data_shapes[0][3],), 0)] * residual
+                return np.array(features)
+            elif len(features) > self.length:
+                residual = len(features) - self.length
+                features = features[residual/2:residual/2 + length]
+                return np.array(features)
+
+
+        fin = codecs.open(feats_scp);feat_files = fin.readlines(); fin.close()
+	    if labels_scp != None:
+            fin = codecs.open(labels_scp);label_files = fin.readlines();fin.close()
+            assert(len(feat_files)==len(label_files))
+
+        self.features = []
+        self.labels   = []
+        for f in range(len(feat_files)):
+            feat_path = feat_files[f].strip().split('\n')[0]
+            feat_basename = feat_files[f].strip().split('/')[-1].split('.')[0]
+            feature = data_loader.loader_by_frames(test_file=feat_path)
+            feature = shape(feature)
+            if labels_scp != None:
+    	        label_path = label_files[f].strip().split('\n')[0]
+                label_basename = label_files[f].strip().split('/')[-1].split('.')[0]
+                assert(feat_basename==label_basename)
+                path = file(label_path, 'rb')
+                label = np.load(path)
+                path.close()
+            else:
+	            label = np.array([0, 0])
+
+            self.features.append(feature)
+            self.labels.append(label)
+        
+        self.num_batches = len(self.features)/(self.batch_size) + 1
+        self.cur_batch = 0
+        if shuffle==True:
+            idx = [i for i in range(len(self.features))]
+            random.shuffle(idx)
+            self.features = [self.features[idx[i]] for i in range(len(idx))]
+            self.labels   = [self.labels[idx[i]] for i in range(len(idx))]
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return self.next()
+
+    def reset(self):
+        self.cur_batch = 0
+
+    @property
+    def provide_data(self):
+        return self._provide_data
+
+    @property
+    def provide_label(self):
+        return self._provide_label
+
+    def next(self):
+        if self.cur_batch == self.num_batches:
+            raise StopIteration
+	if len(self.features) >= (self.cur_batch + 1) * self.batch_size: 
+          feat = mx.nd.array(self.features[self.cur_batch * self.batch_size:(self.cur_batch + 1) * self.batch_size])
+	  feat = [feat.reshape(self.data_shapes[0])]
+	  label = [mx.nd.array(self.labels[self.cur_batch * self.batch_size:(self.cur_batch + 1) * self.batch_size]).reshape(self.label_shapes[0])]
+	elif len(self.features) < (self.cur_batch + 1) * self.batch_size:
+	  residual = (self.cur_batch + 1) * self.batch_size - len(self.features)
+	  feat = mx.nd.array(self.features[self.cur_batch * self.batch_size:] + residual * [np.full((self.length, self.data_shapes[0][3]), 0)])
+	  feat = [feat.reshape(self.data_shapes[0])]
+	  label = mx.nd.array(self.labels[self.cur_batch * self.batch_size:] + residual * [np.full((self.label_shapes[0][1]), 0)])
+	  label = [label.reshape(self.label_shapes[0])]
+
+        self.cur_batch += 1
+        return mx.io.DataBatch(feat, label, pad=0)
+
+
+
 class multi_input_Iter(mx.io.DataIter):
 
     def __init__(self, feats_scp, labels_scp, batch_size, feat_dim, label_dim, num_hidden, shuffle=True, mode="train"):
