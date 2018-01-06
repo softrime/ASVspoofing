@@ -52,6 +52,7 @@ def loader_by_frames(test_file=None, feats_scp=None, labels_scp=None, do_shuffle
     return features, labels
 
   elif test_file != None:
+    print 'processing %s' % test_file
     features = []
     path = file(test_file.strip().split('\n')[0], 'rb')
     feat = np.load(path)

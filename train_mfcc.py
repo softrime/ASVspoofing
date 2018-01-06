@@ -47,12 +47,12 @@ lr         = 0.00001
 num_epoch  = 4
 ndnn       = 4
 dnnsize    = 2048
-pfix       = "spoofing_mfcc_arc-%dx%d_lr-%f_batchsize-%d"% (ndnn, dnnsize, lr, batch_size)
-prefix     = "checkpoints/spoofing_mfcc_arc-%dx%d_lr-%f_batchsize-%d" % (ndnn, dnnsize, lr, batch_size)
+pfix       = "spoofing_mfcc_dnn_arc-%dx%d_lr-%f_batchsize-%d"% (ndnn, dnnsize, lr, batch_size)
+prefix     = "checkpoints/spoofing_mfcc_dnn_arc-%dx%d_lr-%f_batchsize-%d" % (ndnn, dnnsize, lr, batch_size)
 
 
 ##### log deploy #####
-logfn      = "LOG/spoofing_mfcc_arc-%dx%d_lr-%f_batchsize-%d_epoch-%d_datad2.log" % (ndnn, dnnsize, lr, batch_size, num_epoch)
+logfn      = "LOG/spoofing_mfcc_dnn_arc-%dx%d_lr-%f_batchsize-%d_epoch-%d_datad2.log" % (ndnn, dnnsize, lr, batch_size, num_epoch)
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)-15s %(message)s',
                     datefmt='%a, %d %b %Y %H:%M:%S',

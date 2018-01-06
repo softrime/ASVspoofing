@@ -56,7 +56,7 @@ def cnn():
   bn2   = mx.symbol.BatchNorm(data=conv2)  
   tanh2 = mx.symbol.Activation(data=bn2, act_type="tanh")
   pool2 = mx.symbol.Pooling(data=tanh2, pool_type="max",
-                            kernel=(2,2), stride=(2,2))
+                            kernel=(2,1), stride=(2,1))
 
   flatten = mx.symbol.Flatten(data=pool2)
   fc1 = mx.symbol.FullyConnected(data=flatten, num_hidden=500)

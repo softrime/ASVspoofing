@@ -140,7 +140,7 @@ class Cnn_Iter(mx.io.DataIter):
 
 
         fin = codecs.open(feats_scp);feat_files = fin.readlines(); fin.close()
-	    if labels_scp != None:
+	if labels_scp != None:
             fin = codecs.open(labels_scp);label_files = fin.readlines();fin.close()
             assert(len(feat_files)==len(label_files))
 
@@ -159,8 +159,9 @@ class Cnn_Iter(mx.io.DataIter):
                 label = np.load(path)
                 path.close()
             else:
-	            label = np.array([0, 0])
+	        label = np.array([0, 0])
 
+            #print feature.shape, label.shape
             self.features.append(feature)
             self.labels.append(label)
         
@@ -192,16 +193,16 @@ class Cnn_Iter(mx.io.DataIter):
     def next(self):
         if self.cur_batch == self.num_batches:
             raise StopIteration
-	if len(self.features) >= (self.cur_batch + 1) * self.batch_size: 
-          feat = mx.nd.array(self.features[self.cur_batch * self.batch_size:(self.cur_batch + 1) * self.batch_size])
-	  feat = [feat.reshape(self.data_shapes[0])]
-	  label = [mx.nd.array(self.labels[self.cur_batch * self.batch_size:(self.cur_batch + 1) * self.batch_size]).reshape(self.label_shapes[0])]
+	if len(self.features) >= (self.cur_batch + 1) * self.batch_size:
+            feat = mx.nd.array(self.features[self.cur_batch * self.batch_size:(self.cur_batch + 1) * self.batch_size])
+	    feat = [feat.reshape(self.data_shapes[0])]
+	    label = [mx.nd.array(self.labels[self.cur_batch * self.batch_size:(self.cur_batch + 1) * self.batch_size]).reshape(self.label_shapes[0])]
 	elif len(self.features) < (self.cur_batch + 1) * self.batch_size:
-	  residual = (self.cur_batch + 1) * self.batch_size - len(self.features)
-	  feat = mx.nd.array(self.features[self.cur_batch * self.batch_size:] + residual * [np.full((self.length, self.data_shapes[0][3]), 0)])
-	  feat = [feat.reshape(self.data_shapes[0])]
-	  label = mx.nd.array(self.labels[self.cur_batch * self.batch_size:] + residual * [np.full((self.label_shapes[0][1]), 0)])
-	  label = [label.reshape(self.label_shapes[0])]
+	    residual = (self.cur_batch + 1) * self.batch_size - len(self.features)
+	    feat = mx.nd.array(self.features[self.cur_batch * self.batch_size:] + residual * [np.full((self.length, self.data_shapes[0][3]), 0)])
+	    feat = [feat.reshape(self.data_shapes[0])]
+	    label = mx.nd.array(self.labels[self.cur_batch * self.batch_size:] + residual * [np.full((self.label_shapes[0][1]), 0)])
+	    label = [label.reshape(self.label_shapes[0])]
 
         self.cur_batch += 1
         return mx.io.DataBatch(feat, label, pad=0)
