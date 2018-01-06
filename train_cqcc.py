@@ -43,10 +43,10 @@ dev_labels_scp   = "./scp/%s/labels/dev.scp" % data_name
 data_dim   = 90
 label_dim  = 2
 batch_size = 4
-lr         = 0.0001
-num_epoch  = 1
-ndnn       = 4
-dnnsize    = 2048
+lr         = 0.000001
+num_epoch  = 30
+ndnn       = 50
+dnnsize    = 1024
 pfix       = "spoofing_cqcc_arc-%dx%d_lr-%f_batchsize-%d"% (ndnn, dnnsize, lr, batch_size)
 prefix     = "checkpoints/spoofing_cqcc_arc-%dx%d_lr-%f_batchsize-%d" % (ndnn, dnnsize, lr, batch_size)
 

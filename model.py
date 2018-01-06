@@ -43,3 +43,5 @@ def dnn(ndnn=3, dnnsize=1024):
   net = mx.sym.SoftmaxOutput(data=net, name='softmax')
   return net
 
+
+#def cnn()

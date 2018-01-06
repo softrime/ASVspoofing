@@ -71,7 +71,7 @@ class Simple_Iter(mx.io.DataIter):
         self.batch_size = batch_size
 	#self.features, self.labels = data_loader.loader_by_frames(feats_scp=self.feats_scp, labels_scp=self.labels_scp)
         self.features, self.labels = data_loader.load_cqcc(feat_scp=self.feats_scp, label_scp=self.labels_scp)
-	self.scale = 50
+	self.scale = 1
 
     def __iter__(self):
         return self
