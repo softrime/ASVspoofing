@@ -43,16 +43,16 @@ dev_labels_scp   = "./scp/%s/labels/dev.scp" % data_name
 data_dim   = 90
 label_dim  = 2
 batch_size = 4
-lr         = 0.000001
-num_epoch  = 30
-ndnn       = 50
+lr         = 0.00001
+num_epoch  = 4 
+ndnn       = 20
 dnnsize    = 1024
-pfix       = "spoofing_cqcc_arc-%dx%d_lr-%f_batchsize-%d"% (ndnn, dnnsize, lr, batch_size)
-prefix     = "checkpoints/spoofing_cqcc_arc-%dx%d_lr-%f_batchsize-%d" % (ndnn, dnnsize, lr, batch_size)
+pfix       = "spoofing_cqcc_arc-%dx%d_lr-%f_batchsize-%d_epoch-%d"% (ndnn, dnnsize, lr, batch_size, num_epoch)
+prefix     = "checkpoints/spoofing_cqcc_arc-%dx%d_lr-%f_batchsize-%d_epoch-%d" % (ndnn, dnnsize, lr, batch_size, num_epoch)
 
 
 ##### log deploy #####
-logfn      = "LOG/spoofing_mfcc_arc-%dx%d_lr-%f_batchsize-%d_epoch-%d_datad2.log" % (ndnn, dnnsize, lr, batch_size, num_epoch)
+logfn      = "LOG/spoofing_cqcc_arc-%dx%d_lr-%f_batchsize-%d_epoch-%d.log" % (ndnn, dnnsize, lr, batch_size, num_epoch)
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)-15s %(message)s',
                     datefmt='%a, %d %b %Y %H:%M:%S',
@@ -86,7 +86,7 @@ net = model.dnn(ndnn=ndnn, dnnsize=dnnsize)
 data_names = [x[0] for x in train_Iter.provide_data]
 #print data_names;raw_input()
 label_names = [x[0] for x in train_Iter.provide_label]
-mod = mx.mod.Module(symbol=net, context=mx.context.gpu(5), data_names=data_names,label_names=label_names)
+mod = mx.mod.Module(symbol=net, context=mx.context.gpu(7), data_names=data_names,label_names=label_names)
 model_prefix = prefix
 checkpoint = mx.callback.do_checkpoint(model_prefix)
 print "finish model"

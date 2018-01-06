@@ -44,4 +44,27 @@ def dnn(ndnn=3, dnnsize=1024):
   return net
 
 
-#def cnn()
+def cnn():
+  net = mx.sym.Variable('data')
+  conv1 = mx.symbol.Convolution(data=net, kernel=(5,5), num_filter=20)
+  bn1   = mx.symbol.BatchNorm(data=conv1)
+  tanh1 = mx.symbol.Activation(data=bn1, act_type="tanh")
+  pool1 = mx.symbol.Pooling(data=tanh1, pool_type="max",
+                            kernel=(2,2), stride=(2,2))
+
+  conv2 = mx.symbol.Convolution(data=pool1, kernel=(4,4), num_filter=50)
+  bn2   = mx.symbol.BatchNorm(data=conv2)  
+  tanh2 = mx.symbol.Activation(data=bn2, act_type="tanh")
+  pool2 = mx.symbol.Pooling(data=tanh2, pool_type="max",
+                            kernel=(2,2), stride=(2,2))
+
+  flatten = mx.symbol.Flatten(data=pool2)
+  fc1 = mx.symbol.FullyConnected(data=flatten, num_hidden=500)
+  bn3 = mx.symbol.BatchNorm(data=fc1)
+  tanh4 = mx.symbol.Activation(data=bn3, act_type="tanh")
+  dp = mx.sym.Dropout(data=tanh4, p=0.5) 
+
+  fc2 = mx.symbol.FullyConnected(data=dp, num_hidden=2)
+  lenet = mx.symbol.SoftmaxOutput(data=fc2, name='softmax')
+  return lenet
+

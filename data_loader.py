@@ -61,8 +61,8 @@ def loader_by_frames(test_file=None, feats_scp=None, labels_scp=None, do_shuffle
       features.append(feat[j])
     return features
 
-def load_cqcc(test_file=None, feat_scp=None, label_scp=None, mode='T', do_shuffle=True):
-  if mode=='T':
+def load_cqcc(test_file=None, feat_scp=None, label_scp=None, do_shuffle=True):
+  if feat_scp != None and label_scp != None:
     fin = codecs.open(feat_scp, 'r')
     featfiles = fin.readlines()
     fin.close()
@@ -93,9 +93,11 @@ def load_cqcc(test_file=None, feat_scp=None, label_scp=None, mode='T', do_shuffl
     if do_shuffle==True:
       features, labels = shuffle(features, labels)
     return features, labels
-  if mode=='D':
+
+  elif test_file != None:
     features = []
     basename = test_file.strip().split('/')[-1].split('.')[0]
+    print "processing %s" % basename 
     filename = 'data/cqcc/asvspoof/%s_cqcc.mat'% basename
     temp_data = scio.loadmat(filename)
     feat = temp_data['x']
